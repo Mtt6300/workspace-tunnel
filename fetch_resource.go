@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func FetchResource(selectedResource string, client *kubernetes.Clientset) {
+func ShowResourceDetails(selectedResource string, client *kubernetes.Clientset) {
 	var data [][]string
 
 	switch selectedResource {
@@ -22,8 +22,8 @@ func FetchResource(selectedResource string, client *kubernetes.Clientset) {
 
 		for _, resource := range resourceList.Items {
 			var portString string = ""
-			podList := GetListOfPodFromService(resource, client)
-			for _, pod := range podList.Items {
+			resourcePodList := GetPodListFromService(resource, client)
+			for _, pod := range resourcePodList.Items {
 				for _, container := range pod.Spec.Containers {
 					for _, port := range container.Ports {
 						portString += fmt.Sprintf("%s %d,", port.Name, port.ContainerPort)

@@ -41,7 +41,7 @@ func main() {
 
 	case getCMD.FullCommand():
 		if contains(ResourceList, *resource) {
-			FetchResource(*resource, client)
+			ShowResourceDetails(*resource, client)
 		} else {
 			fmt.Println("Resource not found")
 		}

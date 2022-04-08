@@ -10,19 +10,19 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func GetListOfPodFromService(
+func GetPodListFromService(
 	service v1.Service,
 	client *kubernetes.Clientset,
 ) *v1.PodList {
 
 	set := labels.Set(service.Spec.Selector)
-	myPod, err := client.CoreV1().Pods(service.Namespace).List(context.Background(), api.ListOptions{
+	pod, err := client.CoreV1().Pods(service.Namespace).List(context.Background(), api.ListOptions{
 		LabelSelector: set.AsSelector().String(),
 	})
 	if err != nil {
 		fmt.Println(err)
 	}
-	return myPod
+	return pod
 }
 
 func contains(s []string, e string) bool {
