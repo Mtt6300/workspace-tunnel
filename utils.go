@@ -2,37 +2,27 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/api/core/v1"
+	api "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 )
 
-var comparableLabel string = "app.kubernetes.io/name"
+func GetListOfPodFromService(
+	service v1.Service,
+	client *kubernetes.Clientset,
+) *v1.PodList {
 
-func SelectPodFromService(service Service, client *kubernetes.Clientset) (string, string, error) {
-	ServiceInfo, err := client.CoreV1().Services(service.Namespace).Get(context.Background(), service.Name, v1.GetOptions{})
+	set := labels.Set(service.Spec.Selector)
+	myPod, err := client.CoreV1().Pods(service.Namespace).List(context.Background(), api.ListOptions{
+		LabelSelector: set.AsSelector().String(),
+	})
 	if err != nil {
-		return "", "", err
+		fmt.Println(err)
 	}
-	selectedLabel := ServiceInfo.Labels[comparableLabel]
-	podsList, err := client.CoreV1().Pods(service.Namespace).List(context.Background(), v1.ListOptions{})
-	if err != nil {
-		return "", "", err
-	}
-	for _, pod := range podsList.Items {
-		if pod.Labels[comparableLabel] == selectedLabel {
-			var portString string
-			for _, container := range pod.Spec.Containers {
-				for _, port := range container.Ports {
-					portString += fmt.Sprintf(":%d", port.ContainerPort)
-				}
-			}
-			return pod.Name, portString, nil
-		}
-	}
-	return "", "", errors.New("no pod found")
+	return myPod
 }
 
 func contains(s []string, e string) bool {

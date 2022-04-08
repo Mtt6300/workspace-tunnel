@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -18,11 +19,18 @@ func FetchResource(selectedResource string, client *kubernetes.Clientset) {
 		if err != nil {
 			panic(err)
 		}
+
 		for _, resource := range resourceList.Items {
-			_, portString, _ := SelectPodFromService(Service{
-				Name:      resource.Name,
-				Namespace: resource.Namespace,
-			}, client)
+			var portString string = ""
+			podList := GetListOfPodFromService(resource, client)
+			for _, pod := range podList.Items {
+				for _, container := range pod.Spec.Containers {
+					for _, port := range container.Ports {
+						portString += fmt.Sprintf("%s %d,", port.Name, port.ContainerPort)
+					}
+				}
+			}
+
 			data = append(data, []string{
 				resource.Namespace,
 				resource.Name,

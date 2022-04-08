@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 
+	api "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/portforward"
@@ -13,12 +15,16 @@ import (
 )
 
 func StartForwarding(config *rest.Config, service Service, client *kubernetes.Clientset) error {
-	servicePod, _, err := SelectPodFromService(service, client)
+	toFindService, err := client.CoreV1().Services(service.Namespace).Get(context.Background(), service.Name, api.GetOptions{})
+	if err != nil {
+		return err
+	}
+	servicePod := GetListOfPodFromService(*toFindService, client)
 	if err != nil {
 		return err
 	}
 	path := fmt.Sprintf("/api/v1/namespaces/%s/pods/%s/portforward",
-		service.Namespace, servicePod)
+		service.Namespace, servicePod.Items[0].Name)
 	transport, upgrader, err := spdy.RoundTripperFor(config)
 	if err != nil {
 		return err
