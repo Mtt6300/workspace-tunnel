@@ -17,14 +17,12 @@ func StartForwarding(config *rest.Config, service Service, client *kubernetes.Cl
 	if err != nil {
 		return err
 	}
-
 	path := fmt.Sprintf("/api/v1/namespaces/%s/pods/%s/portforward",
 		service.Namespace, servicePod)
 	transport, upgrader, err := spdy.RoundTripperFor(config)
 	if err != nil {
 		return err
 	}
-
 	dialer := spdy.NewDialer(upgrader,
 		&http.Client{Transport: transport},
 		http.MethodPost,

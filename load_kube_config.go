@@ -17,7 +17,6 @@ func LoadKubeConfig(path string) (*rest.Config, *kubernetes.Clientset) {
 	if err != nil {
 		panic(err)
 	}
-
 	fmt.Println("KubeConfig loaded: ", path)
 	return config, client
 }

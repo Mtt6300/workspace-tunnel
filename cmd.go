@@ -20,8 +20,4 @@ var (
 
 func init() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
-	// switch kingpin.MustParse(app.Parse(os.Args[1:])) {
-	// case getCMD.FullCommand():
-	// 	fmt.Println(*resource)
-	// }
 }
