@@ -1,0 +1,28 @@
+workspace:
+- 
+  name: "development-db" # workspace name (must be unique)
+  service:
+  -
+    name: "postgres-db"
+    namespace: "db" 
+    port: 5432
+    localPort: 5432
+
+- 
+  name: "multiple-app" 
+  service:
+  -
+    name: "app1"
+    namespace: "default"
+    port: 8080 
+    localPort: 8081
+  -
+    name: "app2"
+    namespace: "default"
+    port: 8080
+    localPort: 8082
+  -
+    name: "app3"
+    namespace: "default"
+    port: 3000
+    localPort: 8083
