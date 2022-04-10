@@ -8,10 +8,10 @@ import (
 )
 
 type service_conf struct {
-	Name      string `yaml:"name"`
-	Port      int    `yaml:"port"`
-	LocalPort int    `yaml:"localPort"`
-	Namespace string `yaml:"namespace"`
+	Name       string `yaml:"name"`
+	RemotePort int32  `yaml:"port"`
+	LocalPort  int32  `yaml:"localPort"`
+	Namespace  string `yaml:"namespace"`
 }
 
 type workspace_conf struct {

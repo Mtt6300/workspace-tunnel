@@ -27,9 +27,11 @@ func main() {
 			if workspace.Name == *selectedWorkspace {
 				for _, service := range workspace.Services {
 					Ws.Services = append(Ws.Services, Service{
-						Name:      service.Name,
-						Port:      service.Port,
-						LocalPort: service.LocalPort,
+						Name: service.Name,
+						Port: Port{
+							LocalPort:  service.LocalPort,
+							RemotePort: service.RemotePort,
+						},
 						Namespace: service.Namespace,
 						Streams:   stream,
 						StopCh:    stopChannel,

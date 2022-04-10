@@ -37,7 +37,7 @@ func StartForwarding(config *rest.Config, service Service, client *kubernetes.Cl
 			Host: strings.TrimLeft(config.Host, "https://"),
 		})
 	fw, err := portforward.New(dialer,
-		[]string{fmt.Sprintf("%d:%d", service.LocalPort, service.Port)},
+		[]string{fmt.Sprintf("%d:%d", service.Port.LocalPort, service.Port.RemotePort)},
 		service.StopCh,
 		service.ReadyCh,
 		service.Streams.Out,
