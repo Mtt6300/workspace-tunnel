@@ -11,10 +11,10 @@ import (
 func main() {
 	config, client := LoadKubeConfig(*selectedKubeConfigPath)
 
-	fmt.Println()
 	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
 	case portforwardCMD.FullCommand():
 		LoadWorkspaceConfig(*selectedWorkspaceConfig)
+		fmt.Println()
 
 		stopChannel := make(chan struct{}, 1)
 		stream := genericclioptions.IOStreams{

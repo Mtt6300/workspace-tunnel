@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -57,6 +58,7 @@ func ShowResourceDetails(selectedResource string, client *kubernetes.Clientset) 
 	for _, v := range data {
 		table.Append(v)
 	}
+	fmt.Println()
 	table.Render()
 
 }
