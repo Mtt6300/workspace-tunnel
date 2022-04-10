@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type service_conf struct {
+type resource_conf struct {
 	Name       string `yaml:"name"`
 	RemotePort int32  `yaml:"port"`
 	LocalPort  int32  `yaml:"localPort"`
@@ -15,8 +15,9 @@ type service_conf struct {
 }
 
 type workspace_conf struct {
-	Services []service_conf `yaml:"service"`
-	Name     string         `yaml:"name"`
+	Services []resource_conf `yaml:"service"`
+	Pods     []resource_conf `yaml:"pod"`
+	Name     string          `yaml:"name"`
 }
 
 type config struct {

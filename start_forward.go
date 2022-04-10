@@ -1,30 +1,24 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 
-	api "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/portforward"
 	"k8s.io/client-go/transport/spdy"
 )
 
-func StartForwarding(config *rest.Config, service Service, client *kubernetes.Clientset) error {
-	toFindService, err := client.CoreV1().Services(service.Namespace).Get(context.Background(), service.Name, api.GetOptions{})
-	if err != nil {
-		return err
-	}
-	servicePodList, err := GetPodListFromService(*toFindService, client)
+func StartForwarding(config *rest.Config, resource KubeResource, client *kubernetes.Clientset) error {
+	servicePort, err := FindPodForPortForward(resource, client)
 	if err != nil {
 		return err
 	}
 	path := fmt.Sprintf("/api/v1/namespaces/%s/pods/%s/portforward",
-		service.Namespace, servicePodList.Items[0].Name)
+		resource.Namespace, servicePort.Name)
 	transport, upgrader, err := spdy.RoundTripperFor(config)
 	if err != nil {
 		return err
@@ -37,11 +31,11 @@ func StartForwarding(config *rest.Config, service Service, client *kubernetes.Cl
 			Host: strings.TrimLeft(config.Host, "htps:/"),
 		})
 	fw, err := portforward.New(dialer,
-		[]string{fmt.Sprintf("%d:%d", service.Port.LocalPort, service.Port.RemotePort)},
-		service.StopCh,
-		service.ReadyCh,
-		service.Streams.Out,
-		service.Streams.ErrOut,
+		[]string{fmt.Sprintf("%d:%d", resource.Port.LocalPort, resource.Port.RemotePort)},
+		resource.StopCh,
+		resource.ReadyCh,
+		resource.Streams.Out,
+		resource.Streams.ErrOut,
 	)
 	if err != nil {
 		return err

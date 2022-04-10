@@ -21,8 +21,9 @@ workspace:
     namespace: "default"
     port: 8080
     localPort: 8082
+  pod:
   -
     name: "app3"
     namespace: "default"
-    port: 3000
-    localPort: 8083
+    port: 8080
+    localPort: 8084

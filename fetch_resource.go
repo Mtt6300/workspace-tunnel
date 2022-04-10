@@ -13,7 +13,7 @@ func ShowResourceDetails(selectedResource string, client *kubernetes.Clientset) 
 	var data [][]string
 
 	switch selectedResource {
-	case "service":
+	case string(Service):
 		resourceList, err := client.CoreV1().Services("").List(context.Background(), v1.ListOptions{})
 		if err != nil {
 			app.FatalIfError(err, "Error while fetching "+*resource+" from cluster.")
@@ -34,7 +34,7 @@ func ShowResourceDetails(selectedResource string, client *kubernetes.Clientset) 
 				portString,
 			})
 		}
-	case "pod":
+	case string(Pod):
 		resourceList, err := client.CoreV1().Pods("").List(context.Background(), v1.ListOptions{})
 		if err != nil {
 			app.FatalIfError(err, "Error while fetching "+*resource+" from cluster.")

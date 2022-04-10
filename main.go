@@ -22,32 +22,50 @@ func main() {
 			Out:    os.Stdout,
 			ErrOut: os.Stderr,
 		}
-		var Ws Workspace
+
+		var myWorkspace Workspace
 		for _, workspace := range Appconfig.Workspaces {
 			if workspace.Name == *selectedWorkspace {
 				for _, service := range workspace.Services {
-					Ws.Services = append(Ws.Services, Service{
-						Name: service.Name,
-						Port: Port{
-							LocalPort:  service.LocalPort,
-							RemotePort: service.RemotePort,
-						},
-						Namespace: service.Namespace,
-						Streams:   stream,
-						StopCh:    stopChannel,
-						ReadyCh:   make(chan struct{}),
-					})
+					myWorkspace.Resource = append(myWorkspace.Resource, insertResourceToWorkspace(service, Service, stream, stopChannel))
+				}
+				for _, pod := range workspace.Pods {
+					myWorkspace.Resource = append(myWorkspace.Resource, insertResourceToWorkspace(pod, Pod, stream, stopChannel))
 				}
 			}
 		}
-		StartWorkspace(config, Ws, stopChannel, client)
+		if len(myWorkspace.Resource) == 0 {
+			app.FatalIfError(fmt.Errorf("no workspace or resource found"), "")
+		}
+
+		StartWorkspace(config, myWorkspace, stopChannel, client)
 
 	case getCMD.FullCommand():
-		if contains(ResourceList, *resource) {
+		if contains(ResourceList, ResourceType(*resource)) {
 			ShowResourceDetails(*resource, client)
 		} else {
 			app.Errorf("Resource not found")
 		}
 	}
 
+}
+
+func insertResourceToWorkspace(
+	r resource_conf,
+	resourceType ResourceType,
+	stream genericclioptions.IOStreams,
+	stopChannel chan struct{},
+) KubeResource {
+	return KubeResource{
+		Name: r.Name,
+		Port: Port{
+			LocalPort:  r.LocalPort,
+			RemotePort: r.RemotePort,
+		},
+		Namespace: r.Namespace,
+		Streams:   stream,
+		StopCh:    stopChannel,
+		ReadyCh:   make(chan struct{}),
+		Type:      resourceType,
+	}
 }

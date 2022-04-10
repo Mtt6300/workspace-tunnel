@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	v1 "k8s.io/api/core/v1"
@@ -25,7 +26,7 @@ func GetPodListFromService(
 	return pod, nil
 }
 
-func contains(s []string, e string) bool {
+func contains(s []ResourceType, e ResourceType) bool {
 	for _, a := range s {
 		if a == e {
 			return true
@@ -42,5 +43,28 @@ func generatePortsStringFormat(container []v1.Container) string {
 		}
 	}
 	return message
+}
 
+func FindPodForPortForward(resource KubeResource, client *kubernetes.Clientset) (v1.Pod, error) {
+	switch resource.Type {
+	case Service:
+		toFindService, err := client.CoreV1().Services(resource.Namespace).Get(context.Background(), resource.Name, api.GetOptions{})
+		if err != nil {
+			return v1.Pod{}, err
+		}
+		servicePodList, err := GetPodListFromService(*toFindService, client)
+		if err != nil {
+			return v1.Pod{}, err
+		}
+		return servicePodList.Items[0], nil
+
+	case Pod:
+		pod, err := client.CoreV1().Pods(resource.Namespace).Get(context.Background(), resource.Name, api.GetOptions{})
+		if err != nil {
+			return v1.Pod{}, err
+		}
+		return *pod, nil
+
+	}
+	return v1.Pod{}, errors.New("unsupported resource type")
 }
