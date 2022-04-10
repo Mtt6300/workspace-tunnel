@@ -19,7 +19,7 @@ func StartForwarding(config *rest.Config, service Service, client *kubernetes.Cl
 	if err != nil {
 		return err
 	}
-	servicePodList := GetPodListFromService(*toFindService, client)
+	servicePodList, err := GetPodListFromService(*toFindService, client)
 	if err != nil {
 		return err
 	}

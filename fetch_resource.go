@@ -17,12 +17,15 @@ func ShowResourceDetails(selectedResource string, client *kubernetes.Clientset) 
 	case "service":
 		resourceList, err := client.CoreV1().Services("").List(context.Background(), v1.ListOptions{})
 		if err != nil {
-			panic(err)
+			app.FatalIfError(err, "Error while fetching services from cluster.")
 		}
 
 		for _, resource := range resourceList.Items {
 			var portString string = ""
-			resourcePodList := GetPodListFromService(resource, client)
+			resourcePodList, err := GetPodListFromService(resource, client)
+			if err != nil {
+				app.FatalIfError(err, "Error while fetching pods from service.")
+			}
 			for _, pod := range resourcePodList.Items {
 				for _, container := range pod.Spec.Containers {
 					for _, port := range container.Ports {

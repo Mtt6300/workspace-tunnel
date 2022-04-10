@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	v1 "k8s.io/api/core/v1"
 	api "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -13,16 +12,16 @@ import (
 func GetPodListFromService(
 	service v1.Service,
 	client *kubernetes.Clientset,
-) *v1.PodList {
+) (*v1.PodList, error) {
 
 	set := labels.Set(service.Spec.Selector)
 	pod, err := client.CoreV1().Pods(service.Namespace).List(context.Background(), api.ListOptions{
 		LabelSelector: set.AsSelector().String(),
 	})
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
-	return pod
+	return pod, nil
 }
 
 func contains(s []string, e string) bool {

@@ -11,6 +11,7 @@ import (
 func main() {
 	config, client := LoadKubeConfig(*selectedKubeConfigPath)
 
+	fmt.Println()
 	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
 	case portforwardCMD.FullCommand():
 		LoadWorkspaceConfig(*selectedWorkspaceConfig)
@@ -43,7 +44,7 @@ func main() {
 		if contains(ResourceList, *resource) {
 			ShowResourceDetails(*resource, client)
 		} else {
-			fmt.Println("Resource not found")
+			app.Errorf("Resource not found")
 		}
 	}
 

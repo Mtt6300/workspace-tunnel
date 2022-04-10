@@ -11,12 +11,12 @@ import (
 func LoadKubeConfig(path string) (*rest.Config, *kubernetes.Clientset) {
 	config, err := clientcmd.BuildConfigFromFlags("", path)
 	if err != nil {
-		panic(err.Error())
+		app.FatalIfError(err, "Error while loading kubeconfig file.")
 	}
 	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		panic(err)
+		app.FatalIfError(err, "Error while creating kubernetes client.")
 	}
-	fmt.Println("KubeConfig loaded: ", path)
+	fmt.Println("Kube Config loaded: ", path)
 	return config, client
 }

@@ -33,7 +33,7 @@ func StartWorkspace(config *rest.Config, Workspace Workspace, stopCh chan struct
 			defer wg.Done()
 			err := StartForwarding(config, service, client)
 			if err != nil {
-				panic(err)
+				app.FatalIfError(err, "Error while starting port forwarding.")
 			}
 
 			select {

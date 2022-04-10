@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 
 	"gopkg.in/yaml.v2"
 )
@@ -29,11 +28,11 @@ var Appconfig config
 func (c *config) LoadWorkspaceConfig(path string) *config {
 	yamlFile, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Printf("yamlFile.Get err   #%v ", err)
+		app.FatalIfError(err, "Error while loading workspace config file.")
 	}
 	err = yaml.Unmarshal(yamlFile, c)
 	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
+		app.FatalIfError(err, "Error while parsing workspace config file.")
 	}
 	return c
 }
