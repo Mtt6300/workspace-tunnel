@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -27,13 +26,8 @@ func ShowResourceDetails(selectedResource string, client *kubernetes.Clientset) 
 				app.FatalIfError(err, "Error while fetching pods from service.")
 			}
 			for _, pod := range resourcePodList.Items {
-				for _, container := range pod.Spec.Containers {
-					for _, port := range container.Ports {
-						portString += fmt.Sprintf("%s %d,", port.Name, port.ContainerPort)
-					}
-				}
+				portString = generatePortsStringFormat(pod.Spec.Containers)
 			}
-
 			data = append(data, []string{
 				resource.Namespace,
 				resource.Name,

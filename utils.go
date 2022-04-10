@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	v1 "k8s.io/api/core/v1"
 	api "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -31,4 +32,15 @@ func contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func generatePortsStringFormat(container []v1.Container) string {
+	var message string
+	for _, c := range container {
+		for _, p := range c.Ports {
+			message += fmt.Sprintf("%s:%d ", p.Name, p.ContainerPort)
+		}
+	}
+	return message
+
 }
