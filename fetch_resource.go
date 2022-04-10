@@ -16,7 +16,7 @@ func ShowResourceDetails(selectedResource string, client *kubernetes.Clientset) 
 	case "service":
 		resourceList, err := client.CoreV1().Services("").List(context.Background(), v1.ListOptions{})
 		if err != nil {
-			app.FatalIfError(err, "Error while fetching services from cluster.")
+			app.FatalIfError(err, "Error while fetching "+*resource+" from cluster.")
 		}
 
 		for _, resource := range resourceList.Items {
@@ -28,6 +28,21 @@ func ShowResourceDetails(selectedResource string, client *kubernetes.Clientset) 
 			for _, pod := range resourcePodList.Items {
 				portString = generatePortsStringFormat(pod.Spec.Containers)
 			}
+			data = append(data, []string{
+				resource.Namespace,
+				resource.Name,
+				portString,
+			})
+		}
+	case "pod":
+		resourceList, err := client.CoreV1().Pods("").List(context.Background(), v1.ListOptions{})
+		if err != nil {
+			app.FatalIfError(err, "Error while fetching "+*resource+" from cluster.")
+		}
+		for _, resource := range resourceList.Items {
+			var portString string = ""
+			portString = generatePortsStringFormat(resource.Spec.Containers)
+
 			data = append(data, []string{
 				resource.Namespace,
 				resource.Name,

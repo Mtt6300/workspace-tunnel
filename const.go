@@ -1,3 +1,3 @@
 package main
 
-var ResourceList []string = []string{"service"}
+var ResourceList []string = []string{"service", "pod"}
