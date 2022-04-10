@@ -1,4 +1,4 @@
-module workspace-tunnel
+module github.com/Mtt6300/workspace-tunnel
 
 go 1.17
 
