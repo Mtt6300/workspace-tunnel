@@ -8,7 +8,7 @@ import (
 
 var (
 	app                    = kingpin.New("workspace-tunnel", "")
-	selectedKubeConfigPath = app.Flag("kubeconfig", "Kube config path").Default("~/.kube/config").String()
+	selectedKubeConfigPath = app.Flag("kube-config", "Kube config path").Default("~/.kube/config").String()
 
 	portforwardCMD          = app.Command("port-forward", "")
 	selectedWorkspace       = portforwardCMD.Arg("name", "Workspace name").Required().String()
