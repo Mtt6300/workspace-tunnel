@@ -17,11 +17,12 @@ type Port struct {
 }
 
 type KubeResource struct {
-	Name      string
-	Port      Port
-	Namespace string
-	Streams   genericclioptions.IOStreams
-	StopCh    <-chan struct{}
-	ReadyCh   chan struct{}
-	Type      ResourceType
+	Name       string
+	Port       Port
+	Namespace  string
+	Streams    genericclioptions.IOStreams
+	StopCh     <-chan struct{}
+	ReadyCh    chan struct{}
+	Type       ResourceType
+	KubeConfig string
 }

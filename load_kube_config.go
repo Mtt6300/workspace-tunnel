@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -17,6 +15,6 @@ func LoadKubeConfig(path string) (*rest.Config, *kubernetes.Clientset) {
 	if err != nil {
 		app.FatalIfError(err, "Error while creating kubernetes client.")
 	}
-	fmt.Println("Kube Config loaded: ", path)
+	// fmt.Println("Kube Config loaded: ", path)
 	return config, client
 }

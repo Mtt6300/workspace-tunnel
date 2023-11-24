@@ -15,9 +15,10 @@ type resource_conf struct {
 }
 
 type workspace_conf struct {
-	Services []resource_conf `yaml:"service"`
-	Pods     []resource_conf `yaml:"pod"`
-	Name     string          `yaml:"name"`
+	Services       []resource_conf `yaml:"service"`
+	Pods           []resource_conf `yaml:"pod"`
+	Name           string          `yaml:"name"`
+	KubeConfigPath string          `yaml:"kubeConfigPath"`
 }
 
 type config struct {
@@ -39,6 +40,5 @@ func (c *config) LoadWorkspaceConfig(path string) *config {
 }
 func LoadWorkspaceConfig(path string) {
 	Appconfig.LoadWorkspaceConfig(path)
-	fmt.Println("Workspace config loaded: ", path)
-
+	fmt.Println("Workspace config loaded:", path)
 }

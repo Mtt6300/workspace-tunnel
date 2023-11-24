@@ -1,6 +1,7 @@
 workspace:
 - 
   name: "development-db" # workspace name (must be unique)
+  kubeConfigPath: "/Users/root/.kube/config-demo"
   service:
   -
     name: "postgres-db"
@@ -10,6 +11,7 @@ workspace:
 
 - 
   name: "multiple-app" 
+  kubeConfigPath: "/Users/root/.kube/config"
   service:
   -
     name: "app1"

@@ -6,16 +6,13 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 )
 
 type Workspace struct {
 	Resource []KubeResource
 }
 
-func StartWorkspace(config *rest.Config, Workspace Workspace, stopCh chan struct{}, client *kubernetes.Clientset) {
+func StartWorkspace(Workspace Workspace, stopCh chan struct{}) {
 	var wg sync.WaitGroup
 	wg.Add(len(Workspace.Resource))
 
@@ -31,6 +28,8 @@ func StartWorkspace(config *rest.Config, Workspace Workspace, stopCh chan struct
 	for _, r := range Workspace.Resource {
 		go func(r KubeResource) {
 			defer wg.Done()
+			config, client := LoadKubeConfig(r.KubeConfig)
+			fmt.Println("[*]", r.Name, r.Namespace)
 			err := StartForwarding(config, r, client)
 			if err != nil {
 				app.FatalIfError(err, "Error while starting port forwarding.")
