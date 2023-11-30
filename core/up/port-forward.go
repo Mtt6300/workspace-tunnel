@@ -1,19 +1,22 @@
-package main
+package up
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
+	"github.com/Mtt6300/workspace-tunnel/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/portforward"
 	"k8s.io/client-go/transport/spdy"
 )
 
-func StartForwarding(config *rest.Config, resource KubeResource, client *kubernetes.Clientset) error {
-	servicePort, err := FindPodForPortForward(resource, client)
+func startForwarding(ctx context.Context, config *rest.Config, resource types.KubeResource, client *kubernetes.Clientset) error {
+	servicePort, err := findPodForPortForward(resource, client)
 	if err != nil {
 		return err
 	}
@@ -32,10 +35,10 @@ func StartForwarding(config *rest.Config, resource KubeResource, client *kuberne
 		})
 	fw, err := portforward.New(dialer,
 		[]string{fmt.Sprintf("%d:%d", resource.Port.LocalPort, resource.Port.RemotePort)},
-		resource.StopCh,
-		resource.ReadyCh,
-		resource.Streams.Out,
-		resource.Streams.ErrOut,
+		ctx.Done(),
+		make(chan struct{}),
+		os.Stdout,
+		os.Stderr,
 	)
 	if err != nil {
 		return err
