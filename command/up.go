@@ -22,7 +22,7 @@ func init() {
 				log.Fatal(err)
 			}
 
-			onlyFlag, err := cmd.Flags().GetStringArray("only")
+			onlyFlag, err := cmd.Flags().GetStringSlice("only")
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -37,7 +37,7 @@ func init() {
 	upCmd.MarkFlagRequired("name")
 	upCmd.Flags().String("config", "", "config path")
 	upCmd.MarkFlagRequired("config")
-	upCmd.Flags().StringArray("only", []string{}, "port forward only specified resources")
+	upCmd.Flags().StringSlice("only", []string{}, "port forward only specified resources")
 
 	// Here you will define your flags and configuration settings.
 
